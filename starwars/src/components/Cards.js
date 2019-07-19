@@ -11,12 +11,11 @@ const Container = styled.div`
 `
 
 const Cards = ({ data }) => {
-
   return (
     <Container>
     { data.map((item, index) => {
       return <DisplayCard key={index} name={item.name} gender={item.gender} height={item.height} 
-                          hairColor={item.hair_color} starships={item.list} />
+                          hairColor={item.hair_color} />
     })}
     </Container>
   );
