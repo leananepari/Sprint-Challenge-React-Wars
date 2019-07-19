@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import './App.css';
 import Cards from "./components/Cards";
+import Page from "./components/Page";
 import styled from 'styled-components';
 import img from './assets/sw-bg.jpg';
 
@@ -57,13 +58,9 @@ const App = () => {
   return (
     <Wrap>
       <h1 style={{ paddingTop: "20px", fontSize: "3em"}} className="Header">React Wars</h1>
-      <span className="left-btn" style={{fontSize: "2em", fontWeight: "500", margin: "20px 20px 40px 20px"}} onClick={handleLeftClick}>L</span>
-      <span className="page" style={{fontSize: "2em", fontWeight: "500", margin: "20px 20px 40px 20px"}}>Page {currentPage} of 9</span>
-      <span className="right-btn" style={{fontSize: "2em", fontWeight: "500", margin: "20px 20px 40px 20px"}} onClick={handleRightClick}>R</span>
+      <Page currentPage={currentPage} handleLeftClick={handleLeftClick} handleRightClick={handleRightClick}/>
       <Cards data={data} api={api} setApi={setApi} />
-      <span className="left-btn" style={{fontSize: "2em", margin: "20px 20px 40px 20px"}} onClick={handleLeftClick}>L</span>
-      <span className="page" style={{fontSize: "2em", margin: "20px 20px 40px 20px"}}>Page {currentPage} of 9</span>
-      <span className="right-btn" style={{fontSize: "2em", margin: "20px 20px 40px 20px"}} onClick={handleRightClick}>R</span>
+      <Page currentPage={currentPage} handleLeftClick={handleLeftClick} handleRightClick={handleRightClick}/>
     </Wrap>
   );
 }
