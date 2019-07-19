@@ -21,27 +21,49 @@ const App = () => {
   // Try to think through what state you'll need for this app before starting. Then build out
   // the state properties here.
   const [data, setData] = useState([]);
+  const [api, setApi] = useState("https://swapi.co/api/people");
+  const [nextPageUrl, setNextPageUrl] = useState();
+  const [previousPageUrl, setPreviousPageUrl] = useState();
+  const [currentPage, setCurrentPage] = useState('1');
   
   // Fetch characters from the star wars api in an effect hook. Remember, anytime you have a 
   // side effect in a component, you want to think about which state and/or props it should
   // sync up with, if any.
   useEffect(() => {
-    axios.get("https://swapi.co/api/people")
+    axios.get(api)
       .then(response => {
+        setNextPageUrl(response.data.next);
+        setPreviousPageUrl(response.data.previous)
         setData(response.data.results);
       })
-  }, [])
+  }, [api])
+
+  function handleLeftClick() {
+    if (previousPageUrl !== null) {
+      let page = parseInt(currentPage) - 1;
+      setApi(previousPageUrl);
+      setCurrentPage(page);
+    }
+  }
+
+  function handleRightClick() {
+    if (nextPageUrl !== null) {
+      let page = parseInt(currentPage) + 1;
+      setApi(nextPageUrl);
+      setCurrentPage(page);
+    }
+  }
 
   return (
     <Wrap>
       <h1 style={{ paddingTop: "20px", fontSize: "3em"}} className="Header">React Wars</h1>
-      <span className="left-btn" style={{fontSize: "1.5em", color: "white", margin: "20px 20px 20px 20px", paddingBottom: "20px"}}>L</span>
-      <span className="page" style={{fontSize: "1.5em", color: "white", margin: "20px 20px 20px 20px", paddingBottom: "20px"}}>Page 1 of ..</span>
-      <span className="right-btn" style={{fontSize: "1.5em", color: "white", margin: "20px 20px 20px 20px", paddingBottom: "20px"}}>R</span>
-      <Cards data={data}/>
-      <span className="left-btn" style={{fontSize: "1.5em", color: "white", margin: "20px 20px 20px 20px", paddingBottom: "20px"}}>L</span>
-      <span className="page" style={{fontSize: "1.5em", color: "white", margin: "20px 20px 20px 20px", paddingBottom: "20px"}}>Page 1 of ..</span>
-      <span className="right-btn" style={{fontSize: "1.5em", color: "white", margin: "20px 20px 20px 20px", paddingBottom: "20px"}}>R</span>
+      <span className="left-btn" style={{fontSize: "2em", fontWeight: "500", margin: "20px 20px 40px 20px"}} onClick={handleLeftClick}>L</span>
+      <span className="page" style={{fontSize: "2em", fontWeight: "500", margin: "20px 20px 40px 20px"}}>Page {currentPage} of 9</span>
+      <span className="right-btn" style={{fontSize: "2em", fontWeight: "500", margin: "20px 20px 40px 20px"}} onClick={handleRightClick}>R</span>
+      <Cards data={data} api={api} setApi={setApi} />
+      <span className="left-btn" style={{fontSize: "2em", margin: "20px 20px 40px 20px"}} onClick={handleLeftClick}>L</span>
+      <span className="page" style={{fontSize: "2em", margin: "20px 20px 40px 20px"}}>Page {currentPage} of 9</span>
+      <span className="right-btn" style={{fontSize: "2em", margin: "20px 20px 40px 20px"}} onClick={handleRightClick}>R</span>
     </Wrap>
   );
 }
