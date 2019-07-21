@@ -32,34 +32,30 @@ const App = () => {
     axios.get(api)
       .then(response => {
         setStarships({});
-        let length = 0;
-        response.data.results.forEach(item => {
-          length = length + 1;
-          if (item.starships.length > 0) {
-            getStarships(item.starships, item, response);
-          }
-        })
-        if (length === response.data.results.length ) {
-          console.log('inside IF', starships)
-          return response;
-        }
-      }) 
-      .then(response => {
-        console.log('inside second then', starships)
         setNextPageUrl(response.data.next);
         setPreviousPageUrl(response.data.previous)
         setData(response.data.results)
+        
+        response.data.results.forEach(item => {
+          if (item.starships.length > 0) {
+            getStarships(item.starships, item, response, item.starships.length);
+          }
+        })
       })  
 
       function getStarships(arr, item) {
-        console.log('inside function', starships)
+        let length = 0;
+        let names = [];
         arr.forEach(url => {
               axios.get(url)
               .then(res => {
-                let name = res.data.name;
-                setStarships((starships) => {
-                  return {...starships, [item.name]: starships[item.name] ? starships[item.name].concat(name) : [name]}
+                names.push(res.data.name);
+                length = length + 1;
+                if (length === arr.length) {
+                  setStarships((starships) => {
+                  return {...starships, [item.name]: names}
                 })
+                }
               })
         })
       }
