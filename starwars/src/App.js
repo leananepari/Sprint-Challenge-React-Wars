@@ -40,16 +40,19 @@ const App = () => {
           }
         })
         if (length === response.data.results.length ) {
+          console.log('inside IF', starships)
           return response;
         }
       }) 
       .then(response => {
+        console.log('inside second then', starships)
         setNextPageUrl(response.data.next);
         setPreviousPageUrl(response.data.previous)
         setData(response.data.results)
       })  
 
       function getStarships(arr, item) {
+        console.log('inside function', starships)
         arr.forEach(url => {
               axios.get(url)
               .then(res => {

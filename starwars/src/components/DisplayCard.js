@@ -1,8 +1,9 @@
 import React from "react";
-import { Card} from 'semantic-ui-react';
+import { Card } from 'semantic-ui-react';
 
 
 const DisplayCard = ({ name, gender, height, hairColor, starships }) => {
+  console.log('inside display')
   return (
     <div>
       <Card style={{ margin: '20px', width: '350px', textAlign: "left"}}>
