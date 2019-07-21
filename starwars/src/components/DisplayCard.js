@@ -11,7 +11,7 @@ const DisplayCard = ({ name, gender, height, hairColor, starships }) => {
           <Card.Header>Gender: {gender}</Card.Header>
           <Card.Header>Height: {height}</Card.Header>
           <Card.Header>Hair Color: {hairColor}</Card.Header>
-          <Card.Header>Starships: {starships}</Card.Header>
+          {/* <Card.Header>Starships: {starships}</Card.Header> */}
         </Card.Content>
       </Card>
     </div>

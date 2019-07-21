@@ -24,24 +24,33 @@ const App = () => {
   const [data, setData] = useState([]);
   const [api, setApi] = useState("https://swapi.co/api/people");
   const [nextPageUrl, setNextPageUrl] = useState();
-  const [previousPageUrl, setPreviousPageUrl] = useState();
   const [currentPage, setCurrentPage] = useState('1');
   const [starships, setStarships] = useState({});
+
+  const [dataNext, setDataNext] = useState();
+  const [dataArr, setDataArray] = useState([]);
 
   useEffect(() => {
     axios.get(api)
       .then(response => {
         setStarships({});
-        setNextPageUrl(response.data.next);
-        setPreviousPageUrl(response.data.previous)
-        setData(response.data.results)
-        
+        setData(response.data.results);
+
         response.data.results.forEach(item => {
           if (item.starships.length > 0) {
             getStarships(item.starships, item, response, item.starships.length);
           }
         })
-      })  
+        return response.data.next;
+      })
+      .then(next => {
+        axios.get(next)
+        .then(response => {
+          setNextPageUrl(response.data.next);
+          setDataNext(response.data.results);
+
+        }) 
+      })
 
       function getStarships(arr, item) {
         let length = 0;
@@ -60,23 +69,45 @@ const App = () => {
         })
       }
   }, [api])
+
+  function getNextPage(url) {
+    axios.get(url)
+    .then(response => {
+      if (response.data.next !== null) {
+        setNextPageUrl(response.data.next);
+      }
+      setDataNext(response.data.results);
+    })
+  }
   
   function handleLeftClick() {
-    if (previousPageUrl !== null) {
+    if (currentPage > 1) {
       let page = parseInt(currentPage) - 1;
-      setApi(previousPageUrl);
       setCurrentPage(page);
+      if (!dataArr[page]) {
+        setDataArray(dataArr.concat([data]));
+      }
+      setData(dataArr[page - 1]);
     }
   }
 
   function handleRightClick() {
-    if (nextPageUrl !== null) {
+    if (currentPage < 9) {
       let page = parseInt(currentPage) + 1;
-      setApi(nextPageUrl);
       setCurrentPage(page);
+      if (dataArr[page - 1]) {
+        setData(dataArr[page - 1]);
+      } else if (!dataArr[page - 2]){
+        setDataArray(dataArr.concat([data]));
+        setData(dataNext);
+        getNextPage(nextPageUrl);
+      } else {
+        setData(dataNext);
+        getNextPage(nextPageUrl);
+      }
     }
   }
-
+  if (data.length > 0) {
   return (
     <Wrap>
       <h1 style={{ paddingTop: "20px", fontSize: "3em"}} className="Header">React Wars</h1>
@@ -85,6 +116,11 @@ const App = () => {
       <Page currentPage={currentPage} handleLeftClick={handleLeftClick} handleRightClick={handleRightClick}/>
     </Wrap>
   );
+  } else {
+    return (
+      <div>Loading...</div>
+    )
+  }
 }
 
 export default App;
