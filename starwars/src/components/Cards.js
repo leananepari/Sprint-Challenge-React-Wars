@@ -10,14 +10,16 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
-const Cards = ({ data }) => {
+const Cards = ({ data, starships }) => {
   return (
     <Container>
     { data.map((item, index) => {
+
       return <DisplayCard key={index} name={item.name} gender={item.gender} height={item.height} 
-                          hairColor={item.hair_color} />
+                          hairColor={item.hair_color} starships={starships[item.name] ? starships[item.name].join(', ') : 'n/a'}/>
     })}
     </Container>
+
   );
 }
 

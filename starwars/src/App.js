@@ -26,19 +26,40 @@ const App = () => {
   const [nextPageUrl, setNextPageUrl] = useState();
   const [previousPageUrl, setPreviousPageUrl] = useState();
   const [currentPage, setCurrentPage] = useState('1');
-  
-  // Fetch characters from the star wars api in an effect hook. Remember, anytime you have a 
-  // side effect in a component, you want to think about which state and/or props it should
-  // sync up with, if any.
+  const [starships, setStarships] = useState({});
+
   useEffect(() => {
     axios.get(api)
       .then(response => {
-        setNextPageUrl(response.data.next);
-        setPreviousPageUrl(response.data.previous)
-        setData(response.data.results);
-      })
-  }, [api])
+        setStarships({});
+        response.data.results.forEach(item => {
+          if (item.starships.length > 0) {
+            getStarships(item.starships, item, response);
+          }
+        })
+      })   
 
+      function getStarships(arr, item, response) {
+        arr.forEach(url => {
+              axios.get(url)
+              .then(res => {
+                return res.data.name;
+              })
+              .then(name => {
+
+                setStarships((starships) => {
+                  return {...starships, [item.name]: starships[item.name] ? starships[item.name].concat(name) : [name]}
+                })
+
+                setNextPageUrl(response.data.next);
+                setPreviousPageUrl(response.data.previous)
+                setData(response.data.results)
+                
+              })
+            })
+      }
+  }, [api])
+  
   function handleLeftClick() {
     if (previousPageUrl !== null) {
       let page = parseInt(currentPage) - 1;
@@ -59,7 +80,7 @@ const App = () => {
     <Wrap>
       <h1 style={{ paddingTop: "20px", fontSize: "3em"}} className="Header">React Wars</h1>
       <Page currentPage={currentPage} handleLeftClick={handleLeftClick} handleRightClick={handleRightClick}/>
-      <Cards data={data} api={api} setApi={setApi} />
+      <Cards data={data} api={api} setApi={setApi}  starships={starships}/>
       <Page currentPage={currentPage} handleLeftClick={handleLeftClick} handleRightClick={handleRightClick}/>
     </Wrap>
   );
