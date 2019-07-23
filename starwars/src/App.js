@@ -33,7 +33,6 @@ const App = () => {
   useEffect(() => {
     axios.get(api)
       .then(response => {
-        setStarships({});
         setData(response.data.results);
 
         response.data.results.forEach(item => {
@@ -49,26 +48,31 @@ const App = () => {
           setNextPageUrl(response.data.next);
           setDataNext(response.data.results);
 
+          response.data.results.forEach(item => {
+            if (item.starships.length > 0) {
+              getStarships(item.starships, item, response, item.starships.length);
+            }
+          })
         }) 
       })
-
-      function getStarships(arr, item) {
-        let length = 0;
-        let names = [];
-        arr.forEach(url => {
-              axios.get(url)
-              .then(res => {
-                names.push(res.data.name);
-                length = length + 1;
-                if (length === arr.length) {
-                  setStarships((starships) => {
-                  return {...starships, [item.name]: names}
-                })
-                }
-              })
-        })
-      }
   }, [api])
+
+  function getStarships(arr, item) {
+    let length = 0;
+    let names = [];
+    arr.forEach(url => {
+          axios.get(url)
+          .then(res => {
+            names.push(res.data.name);
+            length = length + 1;
+            if (length === arr.length) {
+              setStarships((starships) => {
+              return {...starships, [item.name]: names}
+            })
+            }
+          })
+    })
+  }
 
   function getNextPage(url) {
     axios.get(url)
@@ -77,6 +81,11 @@ const App = () => {
         setNextPageUrl(response.data.next);
       }
       setDataNext(response.data.results);
+      response.data.results.forEach(item => {
+        if (item.starships.length > 0) {
+          getStarships(item.starships, item, response, item.starships.length);
+        }
+      })
     })
   }
   
